@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server
+  namespace: aws-jokes
+  labels:
+    app: server
+
+spec:
+  replicas: 3
+
+  selector:
+    matchLabels:
+      app: server
+
+  template:
+    metadata:
+      labels:
+        app: server
+
+    spec:
+      containers:
+        - name: server
+          image: amikahlon/aws-jokes-server:v1
+          imagePullPolicy: Always
+
+          ports:
+            - containerPort: 4000
+
+          env:
+            - name: PORT
+              value: "4000"
+
+          readinessProbe:
+            httpGet:
+              path: /api/ready
+              port: 4000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+
+          livenessProbe:
+            httpGet:
+              path: /api/live
+              port: 4000
+            initialDelaySeconds: 10
+            periodSeconds: 20
+
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+
+            limits:
+              cpu: "300m"
+              memory: "256Mi"

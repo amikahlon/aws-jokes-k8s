@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: aws-jokes-ingress
+  namespace: aws-jokes
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: aws-jokes.local
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: server
+                port:
+                  number: 4000
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: client
+                port:
+                  number: 80
